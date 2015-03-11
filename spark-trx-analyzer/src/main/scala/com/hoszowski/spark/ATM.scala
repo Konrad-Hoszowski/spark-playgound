@@ -39,8 +39,8 @@ case class TRXwithATM(trx: TRX, atm: Option[ATM])
 // TransactionDifference
 case class TransactionDifference(id: String, t1: TRX, t2: TRX, timeDiff: Long, distance: Double) {
   def mkString(s: String): String = {
-    val speed = distance / (timeDiff.toDouble / 60.0)
-    return speed.toFloat + s + timeDiff + s + distance.toFloat + s + t1.mkString(s) + s + t2.mkString(s)
+    val speed = distance / (timeDiff.toDouble / 60.0)    //distance / minutes / minutes-in-hour
+    return timeDiff + s + distance.toFloat + s + speed.toFloat + s + t1.mkString(s) + s + t2.mkString(s)
   }
 
   def mkString: String = mkString(";")
