@@ -42,20 +42,23 @@ object TrxAnalyzerDriver {
     // transactions joined with atms and repartition
     val trxWithATM = tByATMid.leftOuterJoin(aByATMid).repartition(4)
 
-    // transaction wwith atms mapped and grouped by cardID
+    // transaction with atms mapped and grouped by cardID
     val trxGroupedByCardID = trxWithATM.map(c => (c._2._1.cardId, new TRXwithATM(c._2._1, c._2._2))).groupByKey
 
     //filter cards with more then 1 transaction
-    val moreThanOneTrx = trxGroupedByCardID.filter(x => x._2.size >= 2)
+    val cardsWithMoreThanOneTrx = trxGroupedByCardID.filter(c => c._2.size >= 2)
 
     //compute distance btw transactions
-    val trxWithDistanceComputed = moreThanOneTrx.map(c => (c._1, calculateTransactionDistance(c._2)))
+    val cardsWithComputedTrxDistance = cardsWithMoreThanOneTrx.map(c => (c._1, calculateTransactionDistance(c._2)))
 
-    //flatten and covert to CSV format
-    val suspiciousTransactions = trxWithDistanceComputed.flatMap(t => t._2).map(f => f.mkString("; "))
+    //flatten and remap to trx pairs
+    val trxPairsWithComputedDistance = cardsWithComputedTrxDistance.flatMap(t => t._2)
 
-    //save to file
-    suspiciousTransactions.saveAsTextFile("file://" + outDir)
+    // select suspicious trx pairs
+    val suspiciousTrxPairs = trxPairsWithComputedDistance.filter(x => x.speed > 10 )
+
+    //convert to csv format save to file
+    suspiciousTrxPairs.map(f => f.mkString("; ")).saveAsTextFile("file://" + outDir)
 
     //stop Spark Context
     sc.stop()
