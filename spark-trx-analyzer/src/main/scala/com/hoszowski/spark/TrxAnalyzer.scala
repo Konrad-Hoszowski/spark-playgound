@@ -12,7 +12,7 @@ object TrxAnalyzer {
     if (args.length < 3 ) {
       val usage =
         """
-           usage: <MainClass> atmInputFile trxInputFile outputDirectory
+           usage: <MainClass> atmInputFile trxInputFile outputDirectory sleedLimit
         """
       println(usage)
       System.exit(1)

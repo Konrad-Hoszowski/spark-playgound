@@ -27,6 +27,7 @@ object TrxAnalyzerDriver {
     val atmsFile = args(0)
     val trxFile = args(1)
     val outDir = args(2)
+    val speedLimit = args(3).toDouble
 
     //read ATM data, parse and  map (id to atm obcject)
     val atms = sc.textFile(atmsFile).map(_.split(";")).map(a => new ATM(a))
@@ -55,7 +56,7 @@ object TrxAnalyzerDriver {
     val trxPairsWithComputedDistance = cardsWithComputedTrxDistance.flatMap(t => t._2)
 
     // select suspicious trx pairs
-    val suspiciousTrxPairs = trxPairsWithComputedDistance.filter(x => x.speed > 10 )
+    val suspiciousTrxPairs = trxPairsWithComputedDistance.filter(x => x.speed > speedLimit )
 
     //convert to csv format save to file
     suspiciousTrxPairs.map(f => f.mkString("; ")).saveAsTextFile("file://" + outDir)
