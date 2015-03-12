@@ -24,6 +24,15 @@ object TrxAnalyzer {
 
   def main(args: Array[String]) {
 
+    if (args.length < 3 ) {
+      val usage =
+        """
+           usage: <MainClass> atmInputFile trxInputFile outputDirectory
+        """
+      println(usage)
+      System.exit(1)
+    }
+
     val sc = new SparkContext(new SparkConf().setAppName("TRX Analyzer"))
     val atmsFile = args(0)
     val trxFile = args(1)
@@ -31,10 +40,8 @@ object TrxAnalyzer {
 
     //read ATM data, parse and  map (id to atm obcject)
     val atms = sc.textFile(atmsFile).map(_.split(";")).map(a => new ATM(a))
-    //    System.out.println(atms.first())
-
+    //read TRX data, parse and  map (id to trx obcject)
     val trxs = sc.textFile(trxFile).map(_.split(";")).map(t => new TRX(t))
-    //    System.out.println(trxs.first())
 
     //atms by atmID
     val aByATMid = atms.keyBy(_.atmId)
@@ -50,7 +57,6 @@ object TrxAnalyzer {
 
     //filter cards with more then 1 transaction
     val moreThanOneTrx = trxGroupedByCardID.filter(x => x._2.size >= 2)
-    //    System.out.println(moreThanOneTrx.count())
 
     //compute distance btw transactions
     val trxWithDistanceComputed = moreThanOneTrx.map(c => (c._1, calculateTransactionDistance(c._2)))
@@ -58,11 +64,14 @@ object TrxAnalyzer {
     //    System.out.println(trxWithDistanceComputed.count())
     //    trxWithDistanceComputed.foreach( println )
 
+    //flatten and covert to CSV format
     val suspiciousTransactions = trxWithDistanceComputed.flatMap(t => t._2).map(f => f.mkString("; "))
-    //    suspiciousTransactions.collect().foreach( println)
 
+    //save to file
     suspiciousTransactions.saveAsTextFile("file://" + outDir)
 
+    //stop Spark Context
+    sc.stop()
   }
 
 }
