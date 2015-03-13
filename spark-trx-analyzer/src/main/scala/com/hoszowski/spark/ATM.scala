@@ -37,9 +37,9 @@ case class TRXwithATM(trx: TRX, atm: Option[ATM])
 
 
 // TransactionDifference
-case class TransactionDifference(id: String, t1: TRX, t2: TRX, timeDiff: Long, distance: Double, speed: Double) {
+case class TransactionDifference(id: String, t1: TRX, t2: TRX, timeDiff: Long, distance: Double, fraudability: Double) {
   def mkString(s: String): String = {
-    return timeDiff + s + distance.toFloat + s + speed.toFloat + s + t1.mkString(s) + s + t2.mkString(s)
+    return timeDiff + s + distance.toFloat + s + fraudability.toFloat + s + t1.mkString(s) + s + t2.mkString(s)
   }
 
   def mkString: String = mkString(";")
@@ -49,8 +49,8 @@ object TransactionDifference {
   def apply(ta1: TRXwithATM, ta2: TRXwithATM): TransactionDifference = {
     val timeDiff = getTimeDifference(ta1.trx, ta2.trx)
     val locDist = getLocationDistance(ta1.atm, ta2.atm)
-    val speed = locDist / (timeDiff.toDouble / 60.0)    //distance / minutes / minutes-in-hour
-    new TransactionDifference(ta1.trx.trxId +"-"+ ta2.trx.trxId, ta1.trx, ta2.trx, timeDiff, locDist, speed)
+    val fraudability = locDist / (timeDiff.toDouble / 60.0)    //distance / minutes / minutes-in-hour
+    new TransactionDifference(ta1.trx.trxId +"-"+ ta2.trx.trxId, ta1.trx, ta2.trx, timeDiff, locDist, fraudability)
   }
 
   private def getLocationDistance(oa1: Option[ATM], oa2: Option[ATM]): Double = {
