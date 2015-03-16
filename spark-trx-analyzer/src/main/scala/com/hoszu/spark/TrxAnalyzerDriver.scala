@@ -1,4 +1,4 @@
-package com.hoszowski.spark
+package com.hoszu.spark
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.SparkContext._

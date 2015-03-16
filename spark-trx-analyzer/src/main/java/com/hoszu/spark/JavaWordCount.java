@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.hoszowski.spark;
+package com.hoszu.spark;
 
 import java.util.ArrayList;
 import java.util.Arrays;

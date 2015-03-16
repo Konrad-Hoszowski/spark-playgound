@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.hoszowski.spark
+package com.hoszu.spark
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._

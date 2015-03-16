@@ -1,4 +1,4 @@
-package com.hoszowski.spark
+package com.hoszu.spark
 
 
 

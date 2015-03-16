@@ -1,4 +1,4 @@
-package com.hoszowski.spark
+package com.hoszu.spark
 
 import java.text.SimpleDateFormat
 import java.util.Date
