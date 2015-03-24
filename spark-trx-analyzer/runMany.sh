@@ -1,7 +1,7 @@
 
 
 SPARK_CMD="/Users/hoszowsk/dev/iqlab/git//spark-install/spark/bin/spark-submit --conf spark.eventLog.enabled=true "
-CLASS="com.hoszu.spark.TrxAnalyzer"
+CLASS="com.hoszu.spark.TrxAnalyzerOfflineMain"
 MASTER="spark://tower:7077"
 JAR="target/spark-trx-analyzer-*.jar"
 OUTPUT_DIR="/tmp/suspiciousTransactions"
@@ -20,7 +20,7 @@ case $1 in
       PARALLEL=$2
       ;;
     --local|-l)
-      MASTER="local"
+      MASTER="local[2]"
       ;;
     --fraudability|-f)
       FRAUDABILITYLIMIT=$2
