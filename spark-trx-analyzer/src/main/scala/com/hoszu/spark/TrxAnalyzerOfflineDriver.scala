@@ -11,7 +11,7 @@ object TrxAnalyzerOfflineDriver {
     val atmsFile = args(0)
     val trxFile = args(1)
     val outDir = args(2)
-    val fraudulentLimit = args(3).toDouble
+    val fraudulencyLimit = args(3).toDouble
 
 
     // init Spark context
@@ -34,7 +34,7 @@ object TrxAnalyzerOfflineDriver {
     val trxWithATM = tByATMid.leftOuterJoin(aByATMid).repartition(4)
 
     // filter suspicious transactions
-    val suspiciousTrxPairs = TrxAnalyzer.filterSuspiciousTransactions(fraudulentLimit, trxWithATM)
+    val suspiciousTrxPairs = TrxAnalyzer.filterSuspiciousTransactions(fraudulencyLimit, trxWithATM)
 
     //convert to csv format save to file
     suspiciousTrxPairs.map(f => f.mkString("; ")).saveAsTextFile("file://" + outDir)
