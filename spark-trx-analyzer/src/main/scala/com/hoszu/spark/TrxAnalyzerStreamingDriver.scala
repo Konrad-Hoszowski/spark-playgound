@@ -19,14 +19,14 @@ object TrxAnalyzerStreamingDriver {
     val ssc = new StreamingContext(sc, Seconds(params.batchSize))
 
 
-    //read ATM data, parse and  map (id to atm obcject)
+    //read ATM data, parse and  map (id to atm object)
     val atms = sc.textFile(params.atmsFile).map(_.split(";")).map(a => new ATM(a))
     //atms by atmID
     val aByATMid = atms.keyBy(_.atmId)
 
 
     val trxStream = ssc.socketTextStream(params.host, params.port, StorageLevel.MEMORY_ONLY)
-    //read TRX data, parse and  map (id to trx obcject)
+    //read TRX data, parse and  map (id to trx object)
     val trxs = trxStream.map(_.split(";")).map(t => new TRX(t)).window( Seconds(params.windowSize), Seconds(params.batchSize<<2) )
     //trx by atmID
     val tByATMid = trxs.transform( rdd => rdd.keyBy(_.atmId) )
